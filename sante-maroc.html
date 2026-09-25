@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Offre de soins au Maroc 2022-2024 | Ayoub Harrab</title>
+<meta name="description" content="Projet Power BI : nettoyage de quatre jeux de données publics du Ministère de la Santé, modèle en étoile, mesures DAX et dashboard sur l'offre de soins au Maroc.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F4F5F7; --soft:#FFFFFF; --ink:#1B2430; --muted:#5B6472; --line:#E1E5EA;
+  --blue:#2F5C82; --green:#3F7D58; --amber:#C98A2B; --navy:#44508a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--blue)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.prose{max-width:68ch}
+
+/* En-tête */
+.top{border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;height:60px;gap:16px}
+.back{font-weight:600;text-decoration:none;font-size:15px}
+.back:hover{text-decoration:underline}
+.top .gh{font-size:15px;color:var(--muted);text-decoration:none}
+.top .gh:hover{color:var(--ink)}
+
+/* Titre */
+header.intro{padding-top:56px;padding-bottom:28px}
+.kind{color:var(--green);font-weight:700;font-size:15px;margin:0 0 10px}
+h1{font-size:clamp(32px,5vw,50px);line-height:1.08;letter-spacing:-.02em;margin:0 0 18px;font-weight:600;max-width:18ch}
+.lede{font-size:19px;color:var(--muted);margin:0 0 22px}
+.stack{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0}
+.stack li{font-size:13px;font-weight:500;padding:4px 11px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+.stack li.pbi{background:#fff6e0;border-color:#f1dca6;color:#7a5306}
+.stack li.pq{background:#e8f0fd;border-color:#c6d8f7;color:#1a4ea8}
+.stack li.dax{background:#e6f4ea;border-color:#bfe0c9;color:#2b6e3f}
+
+/* Hero : le dashboard lui-même */
+.hero{margin:8px 0 0}
+.shot{display:block;width:100%;padding:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;cursor:zoom-in;box-shadow:0 18px 40px -24px rgba(23,33,46,.45)}
+.shot img{display:block;width:100%;height:auto}
+figcaption{font-size:14px;color:var(--muted);margin-top:10px}
+
+/* Chiffres clés : une ligne factuelle, pas une vitrine */
+.facts{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--ink);margin:40px 0 0}
+.facts div{padding:14px 16px 4px 0}
+.facts dt{font-family:"Fraunces",Georgia,serif;font-size:28px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.facts dd{margin:2px 0 0;font-size:14px;color:var(--muted);line-height:1.4}
+@media (max-width:720px){.facts{grid-template-columns:repeat(2,1fr)}}
+
+main section{padding-top:64px}
+h1,h2,h3{font-family:"Fraunces",Georgia,serif}
+h2{font-size:28px;letter-spacing:-.01em;margin:0 0 16px;font-weight:600}
+h3{font-size:19px;margin:0 0 6px}
+
+/* Démarche : vraie séquence, donc numérotée */
+.steps{list-style:none;padding:0;margin:28px 0 0;counter-reset:s}
+.steps>li{counter-increment:s;display:grid;grid-template-columns:48px minmax(0,1fr);gap:0 18px;padding:26px 0;border-top:1px solid var(--line)}
+.steps>li::before{content:counter(s);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--blue)}
+.steps>li:nth-child(2)::before{background:var(--amber)}
+.steps>li:nth-child(3)::before{background:var(--navy)}
+.steps>li:nth-child(4)::before{background:var(--green)}
+.steps p{margin:0 0 10px;color:#2c3746}
+.steps ul{margin:0 0 12px;padding-left:20px;color:#2c3746}
+.steps li li{margin:3px 0}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media (max-width:760px){.pair{grid-template-columns:1fr}.steps>li{grid-template-columns:minmax(0,1fr)}.steps>li::before{margin-bottom:10px}}
+.pair figure,.step-fig{margin:0}
+code{font-family:ui-monospace,Consolas,monospace;font-size:.9em;background:var(--soft);padding:1px 5px;border-radius:4px}
+pre{max-width:100%;margin:12px 0 0;padding:16px 18px;background:#1b2533;color:#e6ebf2;border-radius:8px;overflow-x:auto;font-size:14px;line-height:1.55}
+pre code{background:none;padding:0;color:inherit}
+.k{color:#8fb8ff}.f{color:#f0c36b}.c{color:#8fd3a1}
+
+/* Enseignements */
+.insights{display:grid;grid-template-columns:repeat(2,1fr);gap:28px 40px;margin-top:24px}
+.insights p{margin:0;color:#2c3746}
+.insights h3{border-left:3px solid var(--green);padding-left:12px}
+.insights div:nth-child(2) h3{border-color:var(--blue)}
+.insights div:nth-child(3) h3{border-color:var(--amber)}
+.insights div:nth-child(4) h3{border-color:var(--navy)}
+@media (max-width:720px){.insights{grid-template-columns:1fr}}
+
+.limits{background:#fff;border:1px solid var(--line);border-radius:10px;padding:24px 26px;margin-top:8px}
+.limits p{margin:0 0 8px}.limits ul{margin:0;padding-left:20px}
+
+footer{margin:80px 0 0;padding:28px 0 40px;border-top:1px solid var(--line);font-size:15px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+/* Visionneuse */
+dialog{border:0;padding:0;max-width:96vw;max-height:94vh;background:transparent}
+dialog::backdrop{background:rgba(15,20,28,.86)}
+dialog img{display:block;max-width:96vw;max-height:88vh;border-radius:6px}
+dialog p{color:#dfe5ee;font-size:14px;margin:10px 0 0;text-align:center}
+dialog button{position:fixed;top:14px;right:18px;background:#fff;border:0;border-radius:999px;padding:8px 14px;font:600 14px "Inter",sans-serif;cursor:pointer}
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="Navigation">
+  <div class="wrap">
+    <a class="back" href="index.html#projects">‹ Retour au portfolio</a>
+    <a class="gh" href="https://github.com/ayoubharrab" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<main>
+  <header class="intro wrap">
+    <p class="kind">Projet Business Intelligence</p>
+    <h1>L'offre de soins au Maroc, 2022 à 2024</h1>
+    <p class="lede prose">Quatre fichiers Excel publiés par le Ministère de la Santé, hétérogènes et pensés pour être lus plutôt qu'analysés, transformés en un modèle Power BI propre et un dashboard de deux pages pour comparer l'évolution des établissements par région et par niveau de soin.</p>
+    <ul class="stack" aria-label="Outils utilisés">
+      <li class="pbi">Power BI Desktop</li>
+      <li class="pq">Power Query (M)</li>
+      <li class="dax">DAX</li>
+      <li>Modélisation en étoile</li>
+      <li>Open data data.gov.ma</li>
+    </ul>
+  </header>
+
+  <div class="wrap">
+    <figure class="hero">
+      <button class="shot" type="button" data-full="assets/sante-maroc/dashboard-vue-ensemble.webp" data-cap="Page 1 : vue d'ensemble 2022-2024">
+        <img src="assets/sante-maroc/dashboard-vue-ensemble.webp" width="1167" height="656" alt="Dashboard Power BI : nombre d'établissements par région, répartition soins primaires et hospitaliers, tableau détaillé par région.">
+      </button>
+      <figcaption>Page 1 du dashboard, vue d'ensemble. Cliquer sur une image pour l'agrandir.</figcaption>
+    </figure>
+
+    <dl class="facts">
+      <div><dt>3 401</dt><dd>établissements recensés en 2024 (3 344 en 2022)</dd></div>
+      <div><dt>+1,7 %</dt><dd>d'évolution entre 2022 et 2024, soit 57 établissements</dd></div>
+      <div><dt>12</dt><dd>régions et 16 catégories d'établissements couvertes</dd></div>
+      <div><dt>94,9 %</dt><dd>de l'offre relève des soins primaires</dd></div>
+    </dl>
+  </div>
+
+  <section class="wrap" aria-labelledby="contexte">
+    <h2 id="contexte">Le point de départ</h2>
+    <div class="prose">
+      <p>Le Ministère de la Santé et de la Protection sociale publie sur data.gov.ma la liste des établissements de soins : un fichier pour les établissements de soins de santé primaire (RESSP) et un pour les hôpitaux, pour 2022 et pour 2024. Ces fichiers sont faits pour être imprimés : lignes de titre, en-têtes sur plusieurs lignes, noms de colonnes différents d'une année à l'autre, codes de catégorie sans libellé.</p>
+      <p>Mon objectif : répondre simplement à deux questions. Comment l'offre de soins est-elle répartie sur le territoire ? Et où a-t-elle progressé entre 2022 et 2024 ?</p>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="demarche">
+    <h2 id="demarche">La démarche</h2>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Nettoyer et harmoniser les quatre sources</h3>
+          <p>Dans Power Query, chaque fichier suit la même chaîne d'étapes, pour que les quatre tables aient exactement la même structure :</p>
+          <ul>
+            <li>suppression des lignes de titre et promotion des en-têtes (deux fois pour les fichiers hôpitaux) ;</li>
+            <li>typage des colonnes et suppression des colonnes inutiles ;</li>
+            <li>renommage harmonisé (<code>Nom établissement</code> et <code>Etablissement hospitalier</code> deviennent <code>Etablissement</code>) ;</li>
+            <li>ajout des colonnes <code>Annee</code> et <code>Niveau_de_soin</code>, puis fusion des quatre tables en une table de faits.</li>
+          </ul>
+          <div class="pair">
+            <figure>
+              <button class="shot" type="button" data-full="assets/sante-maroc/pq-donnees-brutes.webp" data-cap="Avant : le fichier RESSP 2022 tel que publié">
+                <img src="assets/sante-maroc/pq-donnees-brutes.webp" width="1600" height="772" loading="lazy" alt="Power Query : données brutes avec ligne de titre et colonnes non nommées.">
+              </button>
+              <figcaption>Avant : ligne de titre, colonnes Column1, Column2…</figcaption>
+            </figure>
+            <figure>
+              <button class="shot" type="button" data-full="assets/sante-maroc/pq-donnees-nettoyees.webp" data-cap="Après : table nettoyée avec les étapes appliquées">
+                <img src="assets/sante-maroc/pq-donnees-nettoyees.webp" width="1600" height="772" loading="lazy" alt="Power Query : table nettoyée avec colonnes renommées, année et niveau de soin ajoutés.">
+              </button>
+              <figcaption>Après : colonnes typées, année et niveau de soin ajoutés.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Donner un sens aux codes de catégorie</h3>
+          <p>Les fichiers n'indiquent que des codes (<code>CSR-1</code>, <code>HPr</code>, <code>CRO</code>…). J'ai créé en langage M une table de dimension qui associe chacun des 16 codes à son libellé complet et à son niveau de soin, pour que le dashboard reste lisible par quelqu'un qui ne connaît pas la nomenclature.</p>
+          <figure class="step-fig">
+            <button class="shot" type="button" data-full="assets/sante-maroc/pq-dim-categorie.webp" data-cap="Table Dim_Categorie créée en M">
+              <img src="assets/sante-maroc/pq-dim-categorie.webp" width="1600" height="772" loading="lazy" alt="Table Dim_Categorie : 16 codes avec libellé et niveau de soin.">
+            </button>
+          </figure>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Construire un modèle en étoile</h3>
+          <p>Une table de faits <code>Fait_Etablissements</code> reliée à deux dimensions, <code>Dim_Region</code> et <code>Dim_Categorie</code>, par des relations plusieurs-à-un à filtrage simple. Ce modèle permet de filtrer tous les visuels par année, région ou catégorie sans ambiguïté.</p>
+          <figure class="step-fig">
+            <button class="shot" type="button" data-full="assets/sante-maroc/modele-etoile.webp" data-cap="Modèle en étoile dans Power BI">
+              <img src="assets/sante-maroc/modele-etoile.webp" width="1516" height="660" loading="lazy" alt="Vue modèle Power BI : table de faits reliée aux dimensions région et catégorie.">
+            </button>
+          </figure>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Écrire les mesures DAX et restituer</h3>
+          <p>Des mesures dédiées isolent chaque année pour calculer l'évolution, que le visuel en cascade décompose ensuite région par région.</p>
+<pre><code>Nb 2024 = <span class="f">CALCULATE</span>([Nb Etablissements],
+             Fait_Etablissements[Annee] = <span class="c">2024</span>)
+
+% Evolution = <span class="f">DIVIDE</span>([Évolution], [Nb 2022])</code></pre>
+          <figure class="step-fig" style="margin-top:16px">
+            <button class="shot" type="button" data-full="assets/sante-maroc/dashboard-comparaison.webp" data-cap="Page 2 : comparaison 2022-2024">
+              <img src="assets/sante-maroc/dashboard-comparaison.webp" width="1165" height="651" loading="lazy" alt="Page 2 du dashboard : comparaison par région et par année, cascade d'évolution, répartition par catégorie et par délégation.">
+            </button>
+            <figcaption>Page 2 : comparaison par année, évolution par région, catégories et délégations.</figcaption>
+          </figure>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap" aria-labelledby="enseignements">
+    <h2 id="enseignements">Ce que montrent les données</h2>
+    <div class="insights">
+      <div><h3>Une offre tournée vers la proximité</h3><p>Près de 95 % des établissements relèvent des soins primaires. Les centres de santé ruraux de niveau 1 et les dispensaires ruraux forment à eux seuls la plus grande partie du réseau.</p></div>
+      <div><h3>L'Oriental progresse le plus</h3><p>Sur les 57 établissements supplémentaires entre 2022 et 2024, 16 sont dans l'Oriental et 13 dans Rabat-Salé-Kénitra.</p></div>
+      <div><h3>Casablanca-Settat, seule région en recul</h3><p>La région perd un établissement sur la période, alors qu'elle reste l'une des trois régions les mieux dotées.</p></div>
+      <div><h3>Un réseau hospitalier restreint</h3><p>Les hôpitaux représentent environ 5 % des établissements, ce qui montre le rôle central des soins primaires comme porte d'entrée du système.</p></div>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="limites">
+    <h2 id="limites">Limites et pistes</h2>
+    <div class="limits prose">
+      <p>Le projet compte des établissements, pas leur capacité : un centre rural et un CHU pèsent le même poids.</p>
+      <ul>
+        <li>croiser avec les données de population pour obtenir un nombre d'établissements par habitant ;</li>
+        <li>ajouter une carte par délégation pour repérer les zones sous-dotées ;</li>
+        <li>intégrer les éditions suivantes des fichiers pour suivre la tendance dans le temps.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Ayoub Harrab, Data Analyst / BI</span>
+    <a href="index.html#contact">Me contacter</a>
+  </div>
+</footer>
+
+<dialog id="viewer" aria-label="Image agrandie">
+  <button type="button" id="closeViewer">Fermer</button>
+  <img id="viewerImg" alt="">
+  <p id="viewerCap"></p>
+</dialog>
+
+<script>
+(function(){
+  var d=document.getElementById('viewer'), img=document.getElementById('viewerImg'), cap=document.getElementById('viewerCap');
+  if(!d.showModal) return;
+  document.querySelectorAll('.shot').forEach(function(b){
+    b.addEventListener('click',function(){
+      img.src=b.dataset.full; img.alt=b.querySelector('img').alt; cap.textContent=b.dataset.cap||'';
+      d.showModal();
+    });
+  });
+  document.getElementById('closeViewer').addEventListener('click',function(){d.close()});
+  d.addEventListener('click',function(e){ if(e.target===d) d.close(); });
+})();
+</script>
+</body>
+</html>
